@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CurrencyController;
+use App\Http\Controllers\Api\PairController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::apiResource('currencies', CurrencyController::class);
+Route::apiResource('pairs', PairController::class);
