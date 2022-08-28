@@ -16,7 +16,7 @@ class PairController extends Controller
         $pair = Pair::all();
         return response()->json([
             'status' => true,
-            'pairs'=> $pair,
+            'pair'=> $pair,
         ]);
     }
 
@@ -27,7 +27,7 @@ class PairController extends Controller
         return response()->json([
             'status' => true,
             'message'=>"ok",
-            'post' => $pair
+            'pair'=> $pair
         ],200);
     }
 
@@ -37,10 +37,19 @@ class PairController extends Controller
         return response()->json([
             'status' => true,
             'message'=>"ok",
-            'post' => $pair
+            'pair'=> $pair
         ], 200);
     }
-
+    public function show( $id)
+    {
+        $pair = Pair::find($id);
+        // dd($currency);
+        return response()->json([
+            'status' => true,
+            'message'=>"ok",
+            'pair'=> $pair
+        ],200);
+    }
     public function destroy(Pair $pair)
     {
         $pair->delete();
@@ -57,8 +66,8 @@ class PairController extends Controller
 
         $currency_id_a = Pair::all()->where("id", $pair_id)->pluck("currency_id_a")->implode('0 => ', ); // currency id
         $currency_id_b = Pair::all()->where("id", $pair_id)->pluck("currency_id_b")->implode('0 => ', ); // currency id
-        $currencyNameA = Currency::all()->where("id", $currency_id_a)->pluck("currency_name")->implode('0 => ', ); // currency name
-        $currencyNameB = Currency::all()->where("id", $currency_id_b)->pluck("currency_name")->implode('0 => ', ); // currency name
+        $currencyCodeA = Currency::all()->where("id", $currency_id_a)->pluck("currency_code")->implode('0 => ', ); // currency code
+        $currencyCodeB = Currency::all()->where("id", $currency_id_b)->pluck("currency_code")->implode('0 => ', ); // currency code
 
 
         $resultAToB = $exhangeRateAToB * $value; //taux de change * montant entré
@@ -74,8 +83,8 @@ class PairController extends Controller
         return response()->json([
             'status' => true,
             'message'=>"ok",
-            'currency_name_a' => $currencyNameA,
-            'currency_name_b' => $currencyNameB,
+            'currency_code_a' => $currencyCodeA,
+            'currency_code_b' => $currencyCodeB,
             'convert_a_to_b' => $resultAToB,
             'convert_b_to_a' => $resultBToA,
             'count'=>$count+1,
