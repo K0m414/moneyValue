@@ -5,14 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Pair;
 use Illuminate\Http\Request;
+use App\Models\Currency;
 
 class PairController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
         //
@@ -23,22 +20,6 @@ class PairController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $pair = Pair::create($request->all());
@@ -50,35 +31,6 @@ class PairController extends Controller
         ],200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Pair  $pair
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Pair $pair)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Pair  $pair
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Pair $pair)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pair  $pair
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Pair $pair)
     {
         $pair->update($request->all());
@@ -89,12 +41,6 @@ class PairController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Pair  $pair
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Pair $pair)
     {
         $pair->delete();
@@ -102,5 +48,38 @@ class PairController extends Controller
             'status' => true,
             'message' => "supprimer"
         ], 200);
+    }
+
+    public function convert($pair_id, $value)
+    {
+        $exhangeRateAToB = Pair::all()->where("id", $pair_id)->pluck("exchange_rate_a_to_b")->implode('0 => ', ); // taux de change
+        $exhangeRateBToA = Pair::all()->where("id", $pair_id)->pluck("exchange_rate_b_to_a")->implode('0 => ', ); // taux de change
+
+        $currency_id_a = Pair::all()->where("id", $pair_id)->pluck("currency_id_a")->implode('0 => ', ); // currency id
+        $currency_id_b = Pair::all()->where("id", $pair_id)->pluck("currency_id_b")->implode('0 => ', ); // currency id
+        $currencyNameA = Currency::all()->where("id", $currency_id_a)->pluck("currency_name")->implode('0 => ', ); // currency name
+        $currencyNameB = Currency::all()->where("id", $currency_id_b)->pluck("currency_name")->implode('0 => ', ); // currency name
+
+
+        $resultAToB = $exhangeRateAToB * $value; //taux de change * montant entré
+        $resultBToA = $exhangeRateBToA * $value;
+        
+
+        $count = Pair::all()->where("id", $pair_id)->pluck("count")->implode('0 => ', );
+        $product = Pair::find($pair_id);
+        $product->update([
+                    'count'  => $count+1
+                ]);
+
+        return response()->json([
+            'status' => true,
+            'message'=>"ok",
+            'currency_name_a' => $currencyNameA,
+            'currency_name_b' => $currencyNameB,
+            'convert_a_to_b' => $resultAToB,
+            'convert_b_to_a' => $resultBToA,
+            'count'=>$count+1,
+            
+        ],200);
     }
 }

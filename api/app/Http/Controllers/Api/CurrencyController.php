@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
+use App\Models\Pair;
+// $pair = Pair::all()
+
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCurrencyRequest;
 
@@ -22,7 +25,41 @@ class CurrencyController extends Controller
             'currencies'=> $currency,
         ]);
     }
+    public function exchange()
+    {
+        $currency = Currency::pluck('id');
+        $pairA = Pair::all()->where("currency_id_a", $currency)->pluck("exchange_rate_a_to_b")->implode('0 => ', );
+        $pairB = Pair::all()->where("currency_id_b", 8)->pluck("exchange_rate_b_to_a");
+        // $convert = $pairA * $pairB;
+        dd($pairA+7979);
+    }
+    
+    public function convert($pair_id, $value)
+    {
+        $pairA = Pair::all()->where("currency_id_a", $pair_id)->pluck("exchange_rate_a_to_b")->implode('0 => ', ); // taux de change
+        $pairB = Pair::all()->where("currency_id_b", $pair_id)->pluck("exchange_rate_b_to_a")->implode('0 => ', ); 
 
+        if($pairA){
+            $result = $pairA * $value; //taux de change * montant entré
+        }
+        else{
+            $result = $pairB * $value;
+        }
+        // if(!$result){
+        //     // convertCount();
+        //     $pair->update(Pair::all()->where("currency_id_a", $pair_id)->pluck('count'));
+        //     return response()->json([
+        //     'status' => true,
+        //     'message'=>"ok",
+        //     'post' => $pair
+        // ],200);
+        // }
+        return $result;
+    }
+    // public function convertCount(Request $request, Pair $pair)
+    // {
+        
+    // }
     /**
      * Show the form for creating a new resource.
      *
