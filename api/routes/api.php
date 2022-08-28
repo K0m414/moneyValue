@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
+//route pour les données des devises
 Route::apiResource('currencies', CurrencyController::class);
 Route::apiResource('pairs', PairController::class);
 Route::get('convert/pair_id={id}&convert_value={value}', [PairController::class, 'convert']);

@@ -42,7 +42,6 @@ class CurrencyController extends Controller
             'message'=>"ok",
             'currency' => $currency
         ],200);
-    
     }
 
     //method put
