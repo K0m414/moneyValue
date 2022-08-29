@@ -27,7 +27,7 @@ Pour la partie api :
     
     - php artisan serve
 
-information de connexion :
+## Information de connexion :
 
 name :  Admin,
 
